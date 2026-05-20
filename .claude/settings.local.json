@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -v)",
+      "Bash(composer --version)",
+      "Bash(composer require *)",
+      "Bash(php artisan *)",
+      "Bash(rm -rf node_modules package-lock.json)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(php -m)",
+      "Bash(php --ini)",
+      "Bash(curl -s -o /dev/null -w \"SHOW: %{http_code}\\\\n\" \"http://127.0.0.1:8000/coches/seat-tarraco-2024-p26tk\")",
+      "Bash(curl -s \"http://127.0.0.1:8000/coches\")",
+      "Bash(curl -s \"http://127.0.0.1:8000/\")",
+      "Bash(taskkill //F //IM php.exe)",
+      "Bash(curl -s -o /dev/null -w \"DASH redir: %{http_code}\\\\n\" \"http://127.0.0.1:8001/mi-cuenta\")",
+      "Bash(curl -s -o /dev/null -w \"LISTINGS redir: %{http_code}\\\\n\" \"http://127.0.0.1:8001/mi-cuenta/anuncios\")",
+      "Bash(curl -s -o /dev/null -w \"FAV redir: %{http_code}\\\\n\" \"http://127.0.0.1:8001/mi-cuenta/favoritos\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" \"http://127.0.0.1:8000/\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" \"http://127.0.0.1:8000/coches\")",
+      "Bash(handle vendor *)",
+      "Bash(composer install *)"
+    ]
+  }
+}

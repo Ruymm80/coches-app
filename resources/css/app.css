@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+
+@source '../views';
+@source '../../app';
+
+@plugin '@tailwindcss/forms';
+
+@theme {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+}
