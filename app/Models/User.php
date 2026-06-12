@@ -32,44 +32,44 @@ class User extends Authenticatable
         return $this->role === Role::Admin;
     }
 
-    public function listings(): HasMany
+    public function coches(): HasMany
     {
-        return $this->hasMany(Listing::class);
+        return $this->hasMany(Coche::class);
     }
 
-    public function favorites(): HasMany
+    public function favoritos(): HasMany
     {
-        return $this->hasMany(Favorite::class);
+        return $this->hasMany(Favorito::class);
     }
 
-    public function favoriteListings()
+    public function favoritedCoches()
     {
-        return $this->belongsToMany(Listing::class, 'favorites')->withTimestamps();
+        return $this->belongsToMany(Coche::class, 'favoritos', 'user_id', 'coche_id')->withTimestamps();
     }
 
-    public function conversationsAsBuyer(): HasMany
+    public function chatsAsBuyer(): HasMany
     {
-        return $this->hasMany(Conversation::class, 'buyer_id');
+        return $this->hasMany(Chat::class, 'buyer_id');
     }
 
-    public function conversationsAsSeller(): HasMany
+    public function chatsAsSeller(): HasMany
     {
-        return $this->hasMany(Conversation::class, 'seller_id');
+        return $this->hasMany(Chat::class, 'seller_id');
     }
 
-    public function sentMessages(): HasMany
+    public function sentMensajes(): HasMany
     {
-        return $this->hasMany(Message::class, 'sender_id');
+        return $this->hasMany(Mensaje::class, 'sender_id');
     }
 
     public function unreadMessagesCount(): int
     {
-        return Message::query()
+        return Mensaje::query()
             ->whereNull('read_at')
             ->where('sender_id', '!=', $this->id)
-            ->whereIn('conversation_id', function ($q) {
+            ->whereIn('chat_id', function ($q) {
                 $q->select('id')
-                    ->from('conversations')
+                    ->from('chats')
                     ->where('buyer_id', $this->id)
                     ->orWhere('seller_id', $this->id);
             })

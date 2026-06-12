@@ -13,7 +13,7 @@
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         Inicio
                     </x-nav-link>
-                    <x-nav-link :href="route('listings.index')" :active="request()->routeIs('listings.*')">
+                    <x-nav-link :href="route('coches.index')" :active="request()->routeIs('coches.*')">
                         Buscar coches
                     </x-nav-link>
                 </div>
@@ -21,7 +21,7 @@
 
             <div class="hidden sm:flex sm:items-center sm:ms-6 gap-3">
                 @auth
-                    <a href="{{ route('account.listings.create') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+                    <a href="{{ route('coches.create') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
                         + Publicar anuncio
                     </a>
 
@@ -36,19 +36,19 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('account.dashboard')">Mi cuenta</x-dropdown-link>
+                            <x-dropdown-link :href="route('perfil.dashboard')">Mi cuenta</x-dropdown-link>
                             @if (Auth::user()->isAdmin())
                                 <x-dropdown-link :href="route('admin.dashboard')">Panel admin</x-dropdown-link>
                             @endif
-                            <x-dropdown-link :href="route('account.listings.index')">Mis anuncios</x-dropdown-link>
-                            <x-dropdown-link :href="route('account.favorites.index')">Mis favoritos</x-dropdown-link>
-                            <x-dropdown-link :href="route('account.messages.index')">
+                            <x-dropdown-link :href="route('coches.mine')">Mis anuncios</x-dropdown-link>
+                            <x-dropdown-link :href="route('perfil.favoritos')">Mis favoritos</x-dropdown-link>
+                            <x-dropdown-link :href="route('chats.index')">
                                 Mensajes
                                 @if(($unreadMessages ?? 0) > 0)
                                     <span class="ms-1 inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white">{{ $unreadMessages }}</span>
                                 @endif
                             </x-dropdown-link>
-                            <x-dropdown-link :href="route('profile.edit')">Perfil</x-dropdown-link>
+                            <x-dropdown-link :href="route('perfil.edit')">Perfil</x-dropdown-link>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -81,7 +81,7 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('home')" :active="request()->routeIs('home')">Inicio</x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('listings.index')" :active="request()->routeIs('listings.*')">Buscar coches</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('coches.index')" :active="request()->routeIs('coches.*')">Buscar coches</x-responsive-nav-link>
         </div>
 
         <div class="pt-4 pb-1 border-t border-gray-200">
@@ -91,20 +91,20 @@
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
                 <div class="mt-3 space-y-1">
-                    <x-responsive-nav-link :href="route('account.dashboard')">Mi cuenta</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('perfil.dashboard')">Mi cuenta</x-responsive-nav-link>
                     @if (Auth::user()->isAdmin())
                         <x-responsive-nav-link :href="route('admin.dashboard')">Panel admin</x-responsive-nav-link>
                     @endif
-                    <x-responsive-nav-link :href="route('account.listings.create')">Publicar anuncio</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('account.listings.index')">Mis anuncios</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('account.favorites.index')">Mis favoritos</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('account.messages.index')">
+                    <x-responsive-nav-link :href="route('coches.create')">Publicar anuncio</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('coches.mine')">Mis anuncios</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('perfil.favoritos')">Mis favoritos</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('chats.index')">
                         Mensajes
                         @if(($unreadMessages ?? 0) > 0)
                             <span class="ms-1 inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white">{{ $unreadMessages }}</span>
                         @endif
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('profile.edit')">Perfil</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('perfil.edit')">Perfil</x-responsive-nav-link>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <x-responsive-nav-link :href="route('logout')"

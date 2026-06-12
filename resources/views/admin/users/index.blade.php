@@ -17,6 +17,7 @@
         </div>
 
         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -46,7 +47,7 @@
                                     {{ $user->role->label() }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-right text-sm text-gray-700">{{ $user->listings_count }}</td>
+                            <td class="px-4 py-3 text-right text-sm text-gray-700">{{ $user->coches_count }}</td>
                             <td class="px-4 py-3 text-sm text-gray-500">{{ $user->created_at->format('d/m/Y') }}</td>
                             <td class="px-4 py-3 text-right">
                                 <div class="inline-flex items-center gap-3">
@@ -64,6 +65,7 @@
                     @endforeach
                 </tbody>
             </table>
+          </div>
         </div>
 
         <div class="mt-6">{{ $users->links() }}</div>

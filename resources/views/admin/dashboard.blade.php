@@ -19,12 +19,12 @@
             @foreach([
                 ['Usuarios', $stats['users_total'], 'gray'],
                 ['Admins', $stats['users_admins'], 'indigo'],
-                ['Anuncios', $stats['listings_total'], 'gray'],
-                ['Activos', $stats['listings_active'], 'green'],
-                ['Vendidos', $stats['listings_sold'], 'blue'],
-                ['Borradores', $stats['listings_draft'], 'gray'],
-                ['Conversaciones', $stats['conversations'], 'gray'],
-                ['Mensajes', $stats['messages'], 'gray'],
+                ['Anuncios', $stats['coches_total'], 'gray'],
+                ['Activos', $stats['coches_active'], 'green'],
+                ['Vendidos', $stats['coches_sold'], 'blue'],
+                ['Borradores', $stats['coches_draft'], 'gray'],
+                ['Conversaciones', $stats['chats'], 'gray'],
+                ['Mensajes', $stats['mensajes'], 'gray'],
             ] as [$label, $value, $color])
                 <div class="bg-white border border-gray-200 rounded-lg p-4">
                     <div class="text-xs uppercase tracking-wide text-gray-500">{{ $label }}</div>
@@ -37,22 +37,22 @@
             <div class="bg-white border border-gray-200 rounded-lg">
                 <div class="p-4 border-b flex items-center justify-between">
                     <h2 class="font-semibold text-gray-900">Últimos anuncios</h2>
-                    <a href="{{ route('admin.listings.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver todos →</a>
+                    <a href="{{ route('admin.coches.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">Ver todos →</a>
                 </div>
                 <ul class="divide-y">
-                    @foreach($recentListings as $listing)
+                    @foreach($recentCoches as $coche)
                         <li class="p-3 flex items-center gap-3">
-                            <img src="{{ $listing->primaryImage?->url ?? 'https://loremflickr.com/100/75/car,automobile/all?lock=0' }}"
-                                 class="w-14 h-11 object-cover rounded">
+                            <img src="{{ $coche->imagenPrincipal?->url ?? 'https://loremflickr.com/100/75/car?lock='.$coche->id }}"
+                                 class="shrink-0 w-14 h-11 object-cover rounded">
                             <div class="flex-1 min-w-0">
-                                <a href="{{ route('listings.show', $listing) }}"
+                                <a href="{{ route('coches.show', $coche) }}"
                                    class="font-medium text-gray-900 hover:text-indigo-600 truncate block">
-                                    {{ $listing->title }}
+                                    {{ $coche->title }}
                                 </a>
-                                <div class="text-xs text-gray-500">{{ $listing->user->name }}</div>
+                                <div class="text-xs text-gray-500 truncate">{{ $coche->user->name }}</div>
                             </div>
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded {{ $listing->status->badgeClasses() }}">
-                                {{ $listing->status->label() }}
+                            <span class="shrink-0 text-xs font-semibold px-2 py-0.5 rounded {{ $coche->status->badgeClasses() }}">
+                                {{ $coche->status->label() }}
                             </span>
                         </li>
                     @endforeach

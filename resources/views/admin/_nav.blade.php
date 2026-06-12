@@ -2,7 +2,7 @@
     $links = [
         ['Dashboard', 'admin.dashboard'],
         ['Usuarios', 'admin.users.index'],
-        ['Anuncios', 'admin.listings.index'],
+        ['Anuncios', 'admin.coches.index'],
     ];
 @endphp
 

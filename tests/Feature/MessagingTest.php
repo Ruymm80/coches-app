@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Conversation;
-use App\Models\Listing;
-use App\Models\Message;
+use App\Models\Chat;
+use App\Models\Coche;
+use App\Models\Mensaje;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,18 +17,18 @@ class MessagingTest extends TestCase
     {
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
+        $coche = Coche::factory()->for($seller)->create();
 
         $this->actingAs($buyer)
-            ->post(route('listings.contact', $listing), ['body' => 'Hola, ¿sigue disponible?'])
+            ->post(route('coches.contact', $coche), ['body' => 'Hola, ¿sigue disponible?'])
             ->assertRedirect();
 
-        $this->assertDatabaseHas('conversations', [
-            'listing_id' => $listing->id,
+        $this->assertDatabaseHas('chats', [
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
-        $this->assertDatabaseHas('messages', [
+        $this->assertDatabaseHas('mensajes', [
             'sender_id' => $buyer->id,
             'body' => 'Hola, ¿sigue disponible?',
         ]);
@@ -38,22 +38,22 @@ class MessagingTest extends TestCase
     {
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
+        $coche = Coche::factory()->for($seller)->create();
 
-        $this->actingAs($buyer)->post(route('listings.contact', $listing), ['body' => 'Mensaje 1']);
-        $this->actingAs($buyer)->post(route('listings.contact', $listing), ['body' => 'Mensaje 2']);
+        $this->actingAs($buyer)->post(route('coches.contact', $coche), ['body' => 'Mensaje 1']);
+        $this->actingAs($buyer)->post(route('coches.contact', $coche), ['body' => 'Mensaje 2']);
 
-        $this->assertSame(1, Conversation::count());
-        $this->assertSame(2, Message::count());
+        $this->assertSame(1, Chat::count());
+        $this->assertSame(2, Mensaje::count());
     }
 
     public function test_owner_cannot_contact_themselves(): void
     {
         $seller = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
+        $coche = Coche::factory()->for($seller)->create();
 
         $this->actingAs($seller)
-            ->post(route('listings.contact', $listing), ['body' => 'Hola'])
+            ->post(route('coches.contact', $coche), ['body' => 'Hola'])
             ->assertForbidden();
     }
 
@@ -62,15 +62,15 @@ class MessagingTest extends TestCase
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
         $stranger = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
-        $conv = Conversation::create([
-            'listing_id' => $listing->id,
+        $coche = Coche::factory()->for($seller)->create();
+        $conv = Chat::create([
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
 
         $this->actingAs($stranger)
-            ->get(route('account.messages.show', $conv))
+            ->get(route('chats.show', $conv))
             ->assertForbidden();
     }
 
@@ -79,15 +79,15 @@ class MessagingTest extends TestCase
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
         $admin = User::factory()->admin()->create();
-        $listing = Listing::factory()->for($seller)->create();
-        $conv = Conversation::create([
-            'listing_id' => $listing->id,
+        $coche = Coche::factory()->for($seller)->create();
+        $conv = Chat::create([
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
 
         $this->actingAs($admin)
-            ->get(route('account.messages.show', $conv))
+            ->get(route('chats.show', $conv))
             ->assertOk();
     }
 
@@ -95,14 +95,14 @@ class MessagingTest extends TestCase
     {
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
-        $conv = Conversation::create([
-            'listing_id' => $listing->id,
+        $coche = Coche::factory()->for($seller)->create();
+        $conv = Chat::create([
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
 
-        $msgFromBuyer = $conv->messages()->create([
+        $msgFromBuyer = $conv->mensajes()->create([
             'sender_id' => $buyer->id,
             'body' => 'Hola',
         ]);
@@ -110,7 +110,7 @@ class MessagingTest extends TestCase
         $this->assertNull($msgFromBuyer->read_at);
 
         $this->actingAs($seller)
-            ->get(route('account.messages.show', $conv))
+            ->get(route('chats.show', $conv))
             ->assertOk();
 
         $this->assertNotNull($msgFromBuyer->fresh()->read_at);
@@ -120,19 +120,19 @@ class MessagingTest extends TestCase
     {
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
-        $conv = Conversation::create([
-            'listing_id' => $listing->id,
+        $coche = Coche::factory()->for($seller)->create();
+        $conv = Chat::create([
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
 
         $this->actingAs($seller)
-            ->post(route('account.messages.reply', $conv), ['body' => 'Sí, sigue disponible.'])
-            ->assertRedirect(route('account.messages.show', $conv));
+            ->post(route('chats.reply', $conv), ['body' => 'Sí, sigue disponible.'])
+            ->assertRedirect(route('chats.show', $conv));
 
-        $this->assertDatabaseHas('messages', [
-            'conversation_id' => $conv->id,
+        $this->assertDatabaseHas('mensajes', [
+            'chat_id' => $conv->id,
             'sender_id' => $seller->id,
             'body' => 'Sí, sigue disponible.',
         ]);
@@ -142,16 +142,16 @@ class MessagingTest extends TestCase
     {
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
-        $conv = Conversation::create([
-            'listing_id' => $listing->id,
+        $coche = Coche::factory()->for($seller)->create();
+        $conv = Chat::create([
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
 
         $this->assertNull($conv->last_message_at);
 
-        $conv->messages()->create(['sender_id' => $buyer->id, 'body' => 'Hola']);
+        $conv->mensajes()->create(['sender_id' => $buyer->id, 'body' => 'Hola']);
 
         $this->assertNotNull($conv->fresh()->last_message_at);
     }
@@ -160,15 +160,15 @@ class MessagingTest extends TestCase
     {
         $seller = User::factory()->create();
         $buyer = User::factory()->create();
-        $listing = Listing::factory()->for($seller)->create();
-        $conv = Conversation::create([
-            'listing_id' => $listing->id,
+        $coche = Coche::factory()->for($seller)->create();
+        $conv = Chat::create([
+            'coche_id' => $coche->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
         ]);
-        $conv->messages()->create(['sender_id' => $buyer->id, 'body' => 'A']);
-        $conv->messages()->create(['sender_id' => $buyer->id, 'body' => 'B']);
-        $conv->messages()->create(['sender_id' => $seller->id, 'body' => 'mine']);
+        $conv->mensajes()->create(['sender_id' => $buyer->id, 'body' => 'A']);
+        $conv->mensajes()->create(['sender_id' => $buyer->id, 'body' => 'B']);
+        $conv->mensajes()->create(['sender_id' => $seller->id, 'body' => 'mine']);
 
         $this->assertSame(2, $seller->fresh()->unreadMessagesCount());
         $this->assertSame(1, $buyer->fresh()->unreadMessagesCount());

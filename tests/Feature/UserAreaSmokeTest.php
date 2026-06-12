@@ -7,7 +7,7 @@ use App\Enums\FuelType;
 use App\Enums\ListingStatus;
 use App\Enums\Role;
 use App\Enums\Transmission;
-use App\Models\Listing;
+use App\Models\Coche;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -23,7 +23,7 @@ class UserAreaSmokeTest extends TestCase
         $user = User::factory()->create(['role' => Role::User]);
 
         $this->actingAs($user)
-            ->get(route('account.dashboard'))
+            ->get(route('perfil.dashboard'))
             ->assertOk()
             ->assertSee('Hola, '.$user->name);
     }
@@ -51,87 +51,87 @@ class UserAreaSmokeTest extends TestCase
         ];
 
         $this->actingAs($user)
-            ->post(route('account.listings.store'), $payload)
-            ->assertRedirect(route('account.listings.index'));
+            ->post(route('coches.store'), $payload)
+            ->assertRedirect(route('coches.mine'));
 
-        $this->assertDatabaseHas('listings', [
+        $this->assertDatabaseHas('coches', [
             'user_id' => $user->id,
             'title' => 'BMW Serie 3 2020',
             'status' => ListingStatus::Active->value,
         ]);
 
-        $listing = Listing::firstWhere('title', 'BMW Serie 3 2020');
-        $this->assertCount(1, $listing->images);
-        Storage::disk('public')->assertExists($listing->images->first()->path);
+        $coche = Coche::firstWhere('title', 'BMW Serie 3 2020');
+        $this->assertCount(1, $coche->imagenes);
+        Storage::disk('public')->assertExists($coche->imagenes->first()->path);
     }
 
     public function test_user_cannot_edit_others_listing(): void
     {
         $owner = User::factory()->create();
         $other = User::factory()->create();
-        $listing = Listing::factory()->for($owner)->create();
+        $coche = Coche::factory()->for($owner)->create();
 
         $this->actingAs($other)
-            ->get(route('account.listings.edit', $listing))
+            ->get(route('coches.edit', $coche))
             ->assertForbidden();
     }
 
     public function test_admin_can_edit_any_listing(): void
     {
         $admin = User::factory()->admin()->create();
-        $listing = Listing::factory()->create();
+        $coche = Coche::factory()->create();
 
         $this->actingAs($admin)
-            ->get(route('account.listings.edit', $listing))
+            ->get(route('coches.edit', $coche))
             ->assertOk();
     }
 
     public function test_owner_can_mark_listing_as_sold(): void
     {
         $owner = User::factory()->create();
-        $listing = Listing::factory()->for($owner)->create([
+        $coche = Coche::factory()->for($owner)->create([
             'status' => ListingStatus::Active->value,
         ]);
 
         $this->actingAs($owner)
-            ->patch(route('account.listings.mark-sold', $listing))
+            ->patch(route('coches.mark-sold', $coche))
             ->assertRedirect();
 
-        $this->assertSame(ListingStatus::Sold, $listing->fresh()->status);
+        $this->assertSame(ListingStatus::Sold, $coche->fresh()->status);
     }
 
     public function test_favorite_toggle(): void
     {
         $user = User::factory()->create();
-        $listing = Listing::factory()->create();
+        $coche = Coche::factory()->create();
 
         $this->actingAs($user)
-            ->post(route('listings.favorite', $listing))
+            ->post(route('coches.favorite', $coche))
             ->assertRedirect();
 
-        $this->assertDatabaseHas('favorites', [
+        $this->assertDatabaseHas('favoritos', [
             'user_id' => $user->id,
-            'listing_id' => $listing->id,
+            'coche_id' => $coche->id,
         ]);
 
         $this->actingAs($user)
-            ->post(route('listings.favorite', $listing))
+            ->post(route('coches.favorite', $coche))
             ->assertRedirect();
 
-        $this->assertDatabaseMissing('favorites', [
+        $this->assertDatabaseMissing('favoritos', [
             'user_id' => $user->id,
-            'listing_id' => $listing->id,
+            'coche_id' => $coche->id,
         ]);
     }
 
     public function test_favorites_page_lists_user_favorites(): void
     {
         $user = User::factory()->create();
-        $listing = Listing::factory()->create(['title' => 'Audi Q5 2022']);
-        $user->favorites()->create(['listing_id' => $listing->id]);
+        $coche = Coche::factory()->create(['title' => 'Audi Q5 2022']);
+        $user->favoritos()->create(['coche_id' => $coche->id]);
 
         $this->actingAs($user)
-            ->get(route('account.favorites.index'))
+            ->get(route('perfil.favoritos'))
             ->assertOk()
             ->assertSee('Audi Q5 2022');
     }
@@ -139,12 +139,12 @@ class UserAreaSmokeTest extends TestCase
     public function test_owner_can_delete_listing(): void
     {
         $user = User::factory()->create();
-        $listing = Listing::factory()->for($user)->create();
+        $coche = Coche::factory()->for($user)->create();
 
         $this->actingAs($user)
-            ->delete(route('account.listings.destroy', $listing))
-            ->assertRedirect(route('account.listings.index'));
+            ->delete(route('coches.destroy', $coche))
+            ->assertRedirect(route('coches.mine'));
 
-        $this->assertDatabaseMissing('listings', ['id' => $listing->id]);
+        $this->assertDatabaseMissing('coches', ['id' => $coche->id]);
     }
 }

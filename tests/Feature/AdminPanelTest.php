@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\ListingStatus;
 use App\Enums\Role;
-use App\Models\Listing;
+use App\Models\Coche;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -31,7 +31,7 @@ class AdminPanelTest extends TestCase
     {
         $admin = User::factory()->admin()->create();
         User::factory(3)->create();
-        Listing::factory(5)->create();
+        Coche::factory(5)->create();
 
         $this->actingAs($admin)
             ->get(route('admin.dashboard'))
@@ -115,36 +115,36 @@ class AdminPanelTest extends TestCase
     public function test_admin_can_change_listing_status(): void
     {
         $admin = User::factory()->admin()->create();
-        $listing = Listing::factory()->create(['status' => ListingStatus::Active->value]);
+        $coche = Coche::factory()->create(['status' => ListingStatus::Active->value]);
 
         $this->actingAs($admin)
-            ->patch(route('admin.listings.status', $listing), ['status' => ListingStatus::Expired->value])
+            ->patch(route('admin.coches.status', $coche), ['status' => ListingStatus::Expired->value])
             ->assertRedirect();
 
-        $this->assertSame(ListingStatus::Expired, $listing->fresh()->status);
+        $this->assertSame(ListingStatus::Expired, $coche->fresh()->status);
     }
 
     public function test_admin_can_toggle_featured(): void
     {
         $admin = User::factory()->admin()->create();
-        $listing = Listing::factory()->create(['featured' => false]);
+        $coche = Coche::factory()->create(['featured' => false]);
 
         $this->actingAs($admin)
-            ->patch(route('admin.listings.feature', $listing))
+            ->patch(route('admin.coches.feature', $coche))
             ->assertRedirect();
 
-        $this->assertTrue($listing->fresh()->featured);
+        $this->assertTrue($coche->fresh()->featured);
     }
 
     public function test_admin_can_delete_any_listing(): void
     {
         $admin = User::factory()->admin()->create();
-        $listing = Listing::factory()->create();
+        $coche = Coche::factory()->create();
 
         $this->actingAs($admin)
-            ->delete(route('admin.listings.destroy', $listing))
-            ->assertRedirect(route('admin.listings.index'));
+            ->delete(route('admin.coches.destroy', $coche))
+            ->assertRedirect(route('admin.coches.index'));
 
-        $this->assertDatabaseMissing('listings', ['id' => $listing->id]);
+        $this->assertDatabaseMissing('coches', ['id' => $coche->id]);
     }
 }

@@ -11,7 +11,7 @@
                class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
                 Volver al inicio
             </a>
-            <a href="{{ route('listings.index') }}"
+            <a href="{{ route('coches.index') }}"
                class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50">
                 Buscar coches
             </a>

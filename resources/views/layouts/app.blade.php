@@ -40,9 +40,9 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-sm text-gray-500 flex flex-col sm:flex-row justify-between gap-2">
                     <div>&copy; {{ date('Y') }} Coches App — Proyecto DAW</div>
                     <div class="flex gap-4">
-                        <a href="{{ route('listings.index') }}" class="hover:text-gray-900">Buscar coches</a>
+                        <a href="{{ route('coches.index') }}" class="hover:text-gray-900">Buscar coches</a>
                         @auth
-                            <a href="{{ route('profile.edit') }}" class="hover:text-gray-900">Mi cuenta</a>
+                            <a href="{{ route('perfil.edit') }}" class="hover:text-gray-900">Mi cuenta</a>
                         @else
                             <a href="{{ route('login') }}" class="hover:text-gray-900">Acceder</a>
                         @endauth
