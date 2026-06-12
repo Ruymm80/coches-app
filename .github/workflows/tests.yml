@@ -35,6 +35,16 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install npm dependencies and build assets
+        run: |
+          npm ci
+          npm run build
+
       - name: Setup environment
         run: |
           cp .env.example .env
