@@ -22,6 +22,7 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'phone' => ['nullable', 'string', 'max:30'],
             'province' => ['nullable', 'string', 'max:60'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -32,6 +33,7 @@ class ProfileUpdateRequest extends FormRequest
             'email' => 'email',
             'phone' => 'teléfono',
             'province' => 'provincia',
+            'avatar' => 'foto de perfil',
         ];
     }
 }

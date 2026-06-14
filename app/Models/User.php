@@ -11,12 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'phone', 'province', 'avatar'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'province', 'avatar', 'avatar_mime', 'avatar_data'])]
+#[Hidden(['password', 'remember_token', 'avatar_data'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected static array $defaultColumns = [
+        'id', 'name', 'email', 'email_verified_at', 'password', 'role',
+        'phone', 'province', 'avatar', 'avatar_mime', 'remember_token',
+        'created_at', 'updated_at',
+    ];
 
     protected function casts(): array
     {
@@ -25,6 +31,37 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => Role::class,
         ];
+    }
+
+    protected static function booted(): void
+    {
+        // No cargar avatar_data (BLOB) por defecto para evitar query pesado.
+        static::addGlobalScope('exclude_avatar_data', function ($builder) {
+            if (empty($builder->getQuery()->columns)) {
+                $builder->select(array_map(fn ($c) => 'users.'.$c, self::$defaultColumns));
+            }
+        });
+    }
+
+    public function scopeWithAvatarData($query)
+    {
+        return $query->withoutGlobalScope('exclude_avatar_data');
+    }
+
+    /** URL pública de la foto de perfil, o cadena vacía si no hay avatar. */
+    public function avatarUrl(): string
+    {
+        if (! is_null($this->avatar_mime)) {
+            return route('avatar.show', $this);
+        }
+
+        return '';
+    }
+
+    /** Inicial del nombre para mostrar como avatar por defecto. */
+    public function avatarInitial(): string
+    {
+        return strtoupper(mb_substr($this->name, 0, 1));
     }
 
     public function isAdmin(): bool

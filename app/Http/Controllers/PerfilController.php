@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ListingStatus;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Coche;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,15 +52,35 @@ class PerfilController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        // Foto de perfil opcional — se almacena como BLOB en la BD.
+        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+            $file = $request->file('avatar');
+            $user->avatar_data = file_get_contents($file->getRealPath());
+            $user->avatar_mime = $file->getMimeType() ?: 'image/jpeg';
+        }
+
+        $user->save();
 
         return redirect()->route('perfil.edit')->with('status', 'profile-updated');
+    }
+
+    /** Sirve el binario del avatar de un usuario. */
+    public function avatar(User $user)
+    {
+        $full = User::withAvatarData()->find($user->id);
+        abort_if(! $full || ! $full->avatar_data, 404);
+
+        return response($full->avatar_data, 200, [
+            'Content-Type'  => $full->avatar_mime ?? 'image/jpeg',
+            'Cache-Control' => 'public, max-age=300',
+        ]);
     }
 
     public function destroy(Request $request): RedirectResponse

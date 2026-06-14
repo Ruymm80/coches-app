@@ -18,6 +18,9 @@ Route::get('/coches/{coche:slug}', [CocheController::class, 'show'])->name('coch
 // Sirve las imágenes almacenadas como BLOB en la BD
 Route::get('/imagenes/{imagen}', [CocheController::class, 'imagen'])->name('imagenes.show');
 
+// Sirve el avatar (foto de perfil) almacenado como BLOB
+Route::get('/avatar/{user}', [PerfilController::class, 'avatar'])->name('avatar.show');
+
 // Alias para Breeze (algunos controllers internos lo usan)
 Route::get('/dashboard', fn () => redirect()->route('perfil.dashboard'))
     ->middleware('auth')
