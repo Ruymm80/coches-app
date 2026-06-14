@@ -20,6 +20,14 @@ class DatabaseSeeder extends Seeder
 
     public function run(CarImageDownloader $downloader): void
     {
+        // Idempotente: si el admin ya existe, asumimos que la BD ya está sembrada.
+        // Esto evita el "UniqueConstraintViolationException" al reiniciar el contenedor
+        // en producción (Railway, Heroku, etc.) donde el seed corre al arrancar.
+        if (User::where('email', 'admin@coches.test')->exists()) {
+            $this->command->info('BD ya sembrada (admin@coches.test existe). Saltando seed.');
+            return;
+        }
+
         $admin = User::factory()->admin()->create([
             'name' => 'Admin',
             'email' => 'admin@coches.test',
