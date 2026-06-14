@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureAdmin::class,
         ]);
+
+        // Confiar en todos los proxies (Railway, Heroku, etc). Necesario para
+        // que Laravel reconozca la cabecera X-Forwarded-Proto y entienda que
+        // la petición original era HTTPS aunque el proxy haya pasado HTTP dentro.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
