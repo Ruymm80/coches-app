@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Acceso denegado — Coches.app</x-slot>
+    <x-slot name="title">Acceso denegado — Carros.net</x-slot>
 
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <p class="text-7xl font-extrabold text-rose-600">403</p>

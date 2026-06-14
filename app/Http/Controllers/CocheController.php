@@ -6,6 +6,7 @@ use App\Enums\ListingStatus;
 use App\Http\Requests\StoreCocheRequest;
 use App\Http\Requests\UpdateCocheRequest;
 use App\Models\Coche;
+use App\Models\Imagen;
 use App\Services\ImagenService;
 use App\Support\CocheFilter;
 use Illuminate\Http\Request;
@@ -80,6 +81,20 @@ class CocheController extends Controller
         $user = auth()->user();
 
         return $user && ($user->isAdmin() || $user->id === $coche->user_id);
+    }
+
+    /**
+     * Sirve el binario de una imagen almacenada en BD.
+     */
+    public function imagen(Imagen $imagen)
+    {
+        $full = Imagen::withData()->find($imagen->id);
+        abort_if(! $full || ! $full->data, 404);
+
+        return response($full->data, 200, [
+            'Content-Type'  => $full->mime_type ?? 'image/jpeg',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
     }
 
     /* ============================================================

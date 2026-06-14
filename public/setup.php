@@ -48,9 +48,9 @@ if (! is_string($given) || ! hash_equals($expected, $given)) {
 }
 
 header('Content-Type: text/html; charset=utf-8');
-echo "<!doctype html><meta charset=utf-8><title>Setup Coches.app</title>";
+echo "<!doctype html><meta charset=utf-8><title>Setup Carros.net</title>";
 echo "<style>body{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1020;color:#e6e9f2;padding:20px;line-height:1.45}h1{color:#7dd3fc}pre{background:#111733;border:1px solid #1f2a4a;padding:12px;border-radius:8px;white-space:pre-wrap;word-break:break-word}.ok{color:#86efac}.warn{color:#fbbf24}.err{color:#fca5a5}</style>";
-echo "<h1>Instalación de Coches.app</h1>";
+echo "<h1>Instalación de Carros.net</h1>";
 echo "<p>Base: <code>$base</code></p>";
 
 $output = new \Symfony\Component\Console\Output\BufferedOutput();

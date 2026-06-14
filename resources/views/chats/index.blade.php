@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Mensajes — Coches.app</x-slot>
+    <x-slot name="title">Mensajes — Carros.net</x-slot>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Mensajes</h1>

@@ -1,4 +1,4 @@
-# Coches.app — Marketplace de coches de segunda mano
+# Carros.net — Marketplace de coches de segunda mano
 
 Proyecto DAW. Aplicación Laravel inspirada en Coches.net donde los usuarios publican anuncios de coches, los marcan como vendidos, gestionan favoritos y se comunican entre sí por mensajería interna. Incluye un panel de administración para moderar contenido y usuarios.
 

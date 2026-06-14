@@ -74,6 +74,12 @@
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="inline-flex items-center gap-3">
+                                    <form method="POST" action="{{ route('admin.coches.regenerate-image', $coche) }}" class="inline">
+                                        @csrf
+                                        <button class="text-sm text-purple-600 hover:text-purple-800 font-medium" title="Descargar una foto nueva para este anuncio">
+                                            ↻ Foto
+                                        </button>
+                                    </form>
                                     <a href="{{ route('coches.edit', $coche) }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Editar</a>
                                     <form method="POST" action="{{ route('admin.coches.destroy', $coche) }}"
                                           onsubmit="return confirm('¿Eliminar este anuncio?')" class="inline">

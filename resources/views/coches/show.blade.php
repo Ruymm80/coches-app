@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">{{ $coche->title }} — Coches.app</x-slot>
+    <x-slot name="title">{{ $coche->title }} — Carros.net</x-slot>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <nav class="text-sm text-gray-500 mb-4">
@@ -12,12 +12,31 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-6">
-                <div x-data="{ active: 0, images: {{ $coche->imagenes->map(fn ($i) => $i->url)->toJson() }} }"
+                @php
+                    $imagenesJson = $coche->imagenes->map(fn ($i) => $i->url)->toJson();
+                    $totalImagenes = $coche->imagenes->count();
+                @endphp
+
+                <div x-data="{
+                        active: 0,
+                        images: {{ $imagenesJson }},
+                        count: {{ $totalImagenes }},
+                        next() { this.active = (this.active + 1) % this.count; },
+                        prev() { this.active = (this.active - 1 + this.count) % this.count; },
+                     }"
+                     @keydown.left.window="count > 1 && prev()"
+                     @keydown.right.window="count > 1 && next()"
                      class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <div class="relative aspect-[4/3] bg-gray-100">
-                        @if($coche->imagenes->count())
+
+                    {{-- Carrusel principal (estilo Bootstrap) --}}
+                    <div class="relative aspect-[4/3] bg-gray-100 group">
+                        @if($totalImagenes)
                             <template x-for="(img, idx) in images" :key="idx">
-                                <img :src="img" x-show="active === idx"
+                                <img :src="img"
+                                     x-show="active === idx"
+                                     x-transition:enter="transition-opacity duration-300"
+                                     x-transition:enter-start="opacity-0"
+                                     x-transition:enter-end="opacity-100"
                                      class="absolute inset-0 w-full h-full object-cover" />
                             </template>
                         @else
@@ -27,19 +46,65 @@
                         @endif
 
                         @if($coche->featured)
-                            <span class="absolute top-3 left-3 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded">
-                                Destacado
+                            <span class="absolute top-3 left-3 z-10 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                                ★ Destacado
                             </span>
+                        @endif
+
+                        {{-- Overlays del carrusel (contador, flechas, indicadores) --}}
+                        @if($totalImagenes > 1)
+                            {{-- Contador 3 / 8 (arriba a la derecha) --}}
+                            <span class="absolute top-3 right-3 z-20 bg-black/60 text-white text-xs font-semibold px-2 py-1 rounded">
+                                <span x-text="active + 1"></span> / {{ $totalImagenes }}
+                            </span>
+
+                            {{-- Flecha izquierda --}}
+                            <div class="absolute inset-y-0 left-3 z-20 flex items-center">
+                                <button type="button" @click="prev()"
+                                        class="w-10 h-10 flex items-center justify-center
+                                               rounded-full bg-white/80 hover:bg-white text-gray-900 shadow-md
+                                               hover:scale-110 transition cursor-pointer"
+                                        aria-label="Imagen anterior">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {{-- Flecha derecha --}}
+                            <div class="absolute inset-y-0 right-3 z-20 flex items-center">
+                                <button type="button" @click="next()"
+                                        class="w-10 h-10 flex items-center justify-center
+                                               rounded-full bg-white/80 hover:bg-white text-gray-900 shadow-md
+                                               hover:scale-110 transition cursor-pointer"
+                                        aria-label="Imagen siguiente">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {{-- Indicadores (puntitos) --}}
+                            <div class="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-1.5">
+                                @foreach($coche->imagenes as $idx => $img)
+                                    <button type="button"
+                                            @click="active = {{ $idx }}"
+                                            :class="active === {{ $idx }} ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/75 w-2'"
+                                            class="h-2 rounded-full transition-all duration-200"
+                                            aria-label="Ir a imagen {{ $idx + 1 }}"></button>
+                                @endforeach
+                            </div>
                         @endif
                     </div>
 
-                    @if($coche->imagenes->count() > 1)
+                    {{-- Miniaturas --}}
+                    @if($totalImagenes > 1)
                         <div class="p-3 grid grid-cols-5 sm:grid-cols-6 gap-2">
                             @foreach($coche->imagenes as $idx => $img)
                                 <button type="button"
                                         @click="active = {{ $idx }}"
-                                        :class="active === {{ $idx }} ? 'ring-2 ring-indigo-500' : 'opacity-70 hover:opacity-100'"
-                                        class="aspect-[4/3] rounded overflow-hidden">
+                                        :class="active === {{ $idx }} ? 'ring-2 ring-indigo-500 ring-offset-1' : 'opacity-60 hover:opacity-100'"
+                                        class="aspect-[4/3] rounded overflow-hidden transition">
                                     <img src="{{ $img->url }}" class="w-full h-full object-cover">
                                 </button>
                             @endforeach

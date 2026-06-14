@@ -5,7 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? config('app.name', 'Coches App') }}</title>
+        <title>{{ $title ?? config('app.name', 'Carros.net') }}</title>
+
+        <link rel="icon" type="image/svg+xml" href="{{ asset('logo.svg') }}">
+        <link rel="apple-touch-icon" href="{{ asset('logo.svg') }}">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
@@ -38,7 +41,7 @@
 
             <footer class="bg-white border-t mt-12">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-sm text-gray-500 flex flex-col sm:flex-row justify-between gap-2">
-                    <div>&copy; {{ date('Y') }} Coches App — Proyecto DAW</div>
+                    <div>&copy; {{ date('Y') }} Carros.net — Proyecto DAW</div>
                     <div class="flex gap-4">
                         <a href="{{ route('coches.index') }}" class="hover:text-gray-900">Buscar coches</a>
                         @auth

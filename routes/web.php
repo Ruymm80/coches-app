@@ -15,6 +15,9 @@ Route::get('/', [CocheController::class, 'home'])->name('home');
 Route::get('/coches', [CocheController::class, 'index'])->name('coches.index');
 Route::get('/coches/{coche:slug}', [CocheController::class, 'show'])->name('coches.show');
 
+// Sirve las imágenes almacenadas como BLOB en la BD
+Route::get('/imagenes/{imagen}', [CocheController::class, 'imagen'])->name('imagenes.show');
+
 // Alias para Breeze (algunos controllers internos lo usan)
 Route::get('/dashboard', fn () => redirect()->route('perfil.dashboard'))
     ->middleware('auth')
@@ -83,6 +86,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('coches', [AdminController::class, 'cochesIndex'])->name('coches.index');
     Route::patch('coches/{coche:slug}/estado', [AdminController::class, 'cocheUpdateStatus'])->name('coches.status');
     Route::patch('coches/{coche:slug}/destacar', [AdminController::class, 'cocheToggleFeatured'])->name('coches.feature');
+    Route::post('coches/{coche:slug}/regenerar-imagen', [AdminController::class, 'cocheRegenerarImagen'])->name('coches.regenerate-image');
     Route::delete('coches/{coche:slug}', [AdminController::class, 'cocheDestroy'])->name('coches.destroy');
 });
 

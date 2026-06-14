@@ -9,20 +9,17 @@ use App\Models\Favorito;
 use App\Models\Imagen;
 use App\Models\Mensaje;
 use App\Models\User;
-use App\Services\SeedImageDownloader;
+use App\Services\CarImageDownloader;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    public function run(SeedImageDownloader $downloader): void
+    public function run(CarImageDownloader $downloader): void
     {
-        Storage::disk('public')->deleteDirectory('coches');
-
         $admin = User::factory()->admin()->create([
             'name' => 'Admin',
             'email' => 'admin@coches.test',
@@ -51,22 +48,32 @@ class DatabaseSeeder extends Seeder
                 ->for($seller)
                 ->create();
 
-            $imageCount = rand(1, 3);
+            // 70% de los anuncios → 1 imagen (mejor coherencia portada/contenido).
+            // 30% restante → 2-4 imágenes para poder mostrar el carrusel.
+            $imageCount = rand(1, 10) <= 7 ? 1 : rand(2, 4);
+
             for ($j = 0; $j < $imageCount; $j++) {
-                $seed = ($coche->id * 100) + $j + rand(0, 999);
-                $path = $downloader->download($coche->id, $coche->brand, $j, $seed);
+                $seed = ($coche->id * 1000) + ($j * 100) + rand(0, 99);
+                $download = $downloader->fetch($coche->brand, $coche->model, $seed);
 
-                if ($path === null) {
+                if ($download === null) {
+                    // Fallback: URL externa si la descarga falla
                     $tag = Str::slug(explode('-', explode(' ', $coche->brand)[0])[0]) ?: 'car';
-                    $path = "https://loremflickr.com/800/600/{$tag}?lock={$seed}";
+                    Imagen::create([
+                        'coche_id' => $coche->id,
+                        'path' => "https://loremflickr.com/800/600/{$tag}?lock={$seed}",
+                        'sort_order' => $j,
+                        'is_primary' => $j === 0,
+                    ]);
+                } else {
+                    Imagen::create([
+                        'coche_id' => $coche->id,
+                        'data' => $download['data'],
+                        'mime_type' => $download['mime_type'],
+                        'sort_order' => $j,
+                        'is_primary' => $j === 0,
+                    ]);
                 }
-
-                Imagen::create([
-                    'coche_id' => $coche->id,
-                    'path' => $path,
-                    'sort_order' => $j,
-                    'is_primary' => $j === 0,
-                ]);
             }
 
             $bar->advance();

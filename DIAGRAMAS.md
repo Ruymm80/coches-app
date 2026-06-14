@@ -1,6 +1,61 @@
-# Diagramas — Coches.app
+# Diagramas — Carros.net
 
 Diagramas en formato **Mermaid** (renderizables en GitHub, VSCode, o https://mermaid.live).
+
+---
+
+## Descripción de la base de datos
+
+La base de datos del proyecto está compuesta por las siguientes entidades principales y sus relaciones:
+
+- **Users**: almacena los datos de registro de los usuarios (`id`, `name`, `email`, `password`, `avatar`, `role`, `phone`, `province`, `timestamps`).
+
+- **Coches**: contiene la información de los anuncios de vehículos (`id`, `user_id`, `title`, `slug`, `brand`, `model`, `description`, `price`, `year`, `mileage_km`, `fuel_type`, `transmission`, `body_type`, `color`, `province`, `status`, `featured`, `views_count`, `timestamps`).
+
+- **Imagenes**: relacionada con `coches`, almacena las rutas de las imágenes asociadas a cada anuncio (`id`, `coche_id`, `path`, `sort_order`, `is_primary`, `timestamps`).
+
+- **Chats**: gestiona las conversaciones privadas entre usuarios sobre un anuncio (`id`, `coche_id`, `buyer_id`, `seller_id`, `last_message_at`, `timestamps`).
+
+- **Mensajes**: contiene los mensajes intercambiados en cada chat (`id`, `chat_id`, `sender_id`, `body`, `read_at`, `timestamps`).
+
+- **Favoritos**: tabla intermedia que implementa la relación muchos-a-muchos entre usuarios y los coches marcados como favoritos (`id`, `user_id`, `coche_id`, `timestamps`).
+
+### Relaciones principales
+
+- Un **User** puede publicar muchos **Coches** (1:N).
+- Un **Coche** contiene varias **Imágenes** (1:N).
+- Un **User** puede marcar muchos **Coches** como favoritos a través de la tabla intermedia **Favoritos** (N:M).
+- Un **Chat** vincula a un comprador y a un vendedor con un **Coche** concreto (existe un único chat por par comprador-coche).
+- Un **Chat** contiene muchos **Mensajes** (1:N), y cada mensaje pertenece al usuario que lo envió (`sender_id`).
+
+### Enumerados utilizados
+
+- `role`: `user`, `admin`.
+- `status` (Coche): `draft`, `active`, `sold`, `expired`.
+- `fuel_type`: `gasoline`, `diesel`, `hybrid`, `electric`, `lpg`, `cng`.
+- `transmission`: `manual`, `automatic`.
+- `body_type`: `sedan`, `suv`, `hatchback`, `station_wagon`, `coupe`, `convertible`, `pickup`, `van`.
+
+### Nota sobre la nomenclatura
+
+Por convención del framework Laravel, los nombres de los campos en la base de datos están en inglés, aunque el dominio del problema y los modelos de negocio se expresan en español. Glosario rápido para defensa:
+
+| Campo BD | Significado |
+|---|---|
+| `brand` | marca |
+| `model` | modelo |
+| `mileage_km` | kilómetros |
+| `fuel_type` | combustible |
+| `transmission` | cambio |
+| `body_type` | carrocería |
+| `province` | provincia |
+| `status` | estado |
+| `featured` | destacado |
+| `views_count` | visitas |
+| `body` (en mensajes) | contenido |
+| `read_at` | fecha en la que el mensaje fue leído (sustituye al boolean "leído", permitiendo mostrar "leído hace 2 min") |
+| `sender_id` | usuario que envía el mensaje |
+| `buyer_id` / `seller_id` | comprador / vendedor en un chat |
 
 ---
 

@@ -60,7 +60,7 @@ Esto crea `vendor/` ligero (~40 MB) y `public/build/` con el CSS y JS minificado
 2. Edita `.env` con los datos reales del hosting:
 
    ```env
-   APP_NAME="Coches.app"
+   APP_NAME="Carros.net"
    APP_ENV=production
    APP_KEY=base64:NQ6qRchUfzW9A9FDrLGHyIY+XEZmKqSfGO6Vv0POd24=
    APP_DEBUG=false

@@ -3,9 +3,9 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-indigo-600 text-white font-bold">C</span>
-                        <span class="font-bold text-lg">Coches<span class="text-indigo-600">.app</span></span>
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+                        <img src="{{ asset('logo.svg') }}" alt="Carros.net" class="shrink-0 w-8 h-8 object-contain">
+                        <span class="font-bold text-lg leading-none">Carros<span class="text-indigo-600">.net</span></span>
                     </a>
                 </div>
 

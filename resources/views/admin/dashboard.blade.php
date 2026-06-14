@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Panel admin — Coches.app</x-slot>
+    <x-slot name="title">Panel admin — Carros.net</x-slot>
 
     @include('admin._nav')
 

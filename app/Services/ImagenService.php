@@ -5,10 +5,12 @@ namespace App\Services;
 use App\Models\Coche;
 use App\Models\Imagen;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class ImagenService
 {
+    /**
+     * Guarda las imágenes subidas como BLOB en la BD.
+     */
     public function storeFor(Coche $coche, array $files): void
     {
         $start = $coche->imagenes()->max('sort_order');
@@ -21,35 +23,29 @@ class ImagenService
                 continue;
             }
 
-            $path = $file->store("coches/{$coche->id}", 'public');
-
             $isPrimary = ! $hasPrimary;
             $hasPrimary = true;
 
             Imagen::create([
-                'coche_id' => $coche->id,
-                'path' => $path,
+                'coche_id'   => $coche->id,
+                'data'       => file_get_contents($file->getRealPath()),
+                'mime_type'  => $file->getMimeType() ?: 'image/jpeg',
                 'sort_order' => $next++,
                 'is_primary' => $isPrimary,
             ]);
         }
     }
 
+    /**
+     * Borra imágenes específicas del coche. Al estar en BD, basta con eliminar
+     * las filas. Si la imagen principal se borra, asciende la siguiente.
+     */
     public function deleteForCoche(Coche $coche, array $imagenIds): void
     {
         $imagenes = $coche->imagenes()->whereIn('id', $imagenIds)->get();
+        $deletedPrimary = $imagenes->contains(fn ($i) => $i->is_primary);
 
-        $deletedPrimary = false;
-
-        foreach ($imagenes as $imagen) {
-            if ($imagen->is_primary) {
-                $deletedPrimary = true;
-            }
-            if (! str_starts_with($imagen->path, 'http')) {
-                Storage::disk('public')->delete($imagen->path);
-            }
-            $imagen->delete();
-        }
+        Imagen::whereIn('id', $imagenes->pluck('id'))->delete();
 
         if ($deletedPrimary) {
             $next = $coche->imagenes()->orderBy('sort_order')->first();
@@ -57,14 +53,9 @@ class ImagenService
         }
     }
 
+    /** Borra todas las imágenes del coche (cuando se elimina el anuncio). */
     public function deleteAllForCoche(Coche $coche): void
     {
-        foreach ($coche->imagenes as $imagen) {
-            if (! str_starts_with($imagen->path, 'http')) {
-                Storage::disk('public')->delete($imagen->path);
-            }
-        }
-
-        Storage::disk('public')->deleteDirectory("coches/{$coche->id}");
+        $coche->imagenes()->delete();
     }
 }

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Coches en venta — Coches.app</x-slot>
+    <x-slot name="title">Coches en venta — Carros.net</x-slot>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="mb-6">

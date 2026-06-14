@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Coches.app — Compra y vende coches de segunda mano</x-slot>
+    <x-slot name="title">Carros.net — Compra y vende coches de segunda mano</x-slot>
 
     <section class="relative bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 text-white overflow-hidden">
         <div class="absolute inset-0 opacity-20 pointer-events-none"

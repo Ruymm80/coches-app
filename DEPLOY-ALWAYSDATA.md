@@ -133,7 +133,7 @@ nano .env
 Edita estos valores con los datos reales:
 
 ```env
-APP_NAME="Coches.app"
+APP_NAME="Carros.net"
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://mialias.alwaysdata.net

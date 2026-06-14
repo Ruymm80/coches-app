@@ -7,8 +7,10 @@ use App\Enums\Role;
 use App\Http\Requests\UpdateUserByAdminRequest;
 use App\Models\Chat;
 use App\Models\Coche;
+use App\Models\Imagen;
 use App\Models\Mensaje;
 use App\Models\User;
+use App\Services\CarImageDownloader;
 use App\Services\ImagenService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -152,5 +154,32 @@ class AdminController extends Controller
         return redirect()
             ->route('admin.coches.index')
             ->with('status', 'Anuncio eliminado.');
+    }
+
+    /**
+     * Descarga una imagen nueva para el coche (Pixabay > loremflickr) y
+     * reemplaza la imagen principal actual. Útil cuando la foto auto-generada
+     * no encaja con el modelo del anuncio.
+     */
+    public function cocheRegenerarImagen(Coche $coche, CarImageDownloader $downloader)
+    {
+        $download = $downloader->fetch($coche->brand, $coche->model, random_int(1, 100000));
+
+        if ($download === null) {
+            return back()->with('status', 'No se pudo descargar una imagen nueva. Inténtalo otra vez.');
+        }
+
+        // Borra todas las imágenes actuales del coche y crea una nueva principal
+        $coche->imagenes()->delete();
+
+        Imagen::create([
+            'coche_id'   => $coche->id,
+            'data'       => $download['data'],
+            'mime_type'  => $download['mime_type'],
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        return back()->with('status', 'Imagen regenerada para "'.$coche->title.'".');
     }
 }

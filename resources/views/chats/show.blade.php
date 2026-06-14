@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Conversación — Coches.app</x-slot>
+    <x-slot name="title">Conversación — Carros.net</x-slot>
 
     @php
         $me = auth()->user();

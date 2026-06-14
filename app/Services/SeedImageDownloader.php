@@ -3,19 +3,17 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * Descarga una imagen de loremflickr para un coche y la guarda en
- * storage/app/public/coches/{id}/{n}.jpg. Devuelve la ruta relativa
- * que se guarda en imagenes.path.
+ * Descarga una imagen de loremflickr para un coche y devuelve el binario
+ * junto al mime-type, para almacenarse como BLOB en la BD.
  *
  * Si la descarga falla, devuelve null para que el seeder use un placeholder.
  */
 class SeedImageDownloader
 {
-    /** Mapa de marca → tag de Flickr (normalizado). */
+    /** Mapa marca → tag de Flickr normalizado. */
     protected array $brandTagMap = [
         'Audi' => 'audi',
         'BMW' => 'bmw',
@@ -31,7 +29,10 @@ class SeedImageDownloader
         'Kia' => 'kia',
     ];
 
-    public function download(int $cocheId, string $brand, int $index, int $seed): ?string
+    /**
+     * Devuelve ['data' => bytes, 'mime_type' => string] o null si falla.
+     */
+    public function download(string $brand, int $seed): ?array
     {
         $tag = $this->brandTagMap[$brand] ?? Str::slug($brand);
         $url = "https://loremflickr.com/800/600/{$tag}?lock={$seed}";
@@ -46,10 +47,10 @@ class SeedImageDownloader
                 return null;
             }
 
-            $path = "coches/{$cocheId}/{$index}.jpg";
-            Storage::disk('public')->put($path, $response->body());
-
-            return $path;
+            return [
+                'data' => $response->body(),
+                'mime_type' => $response->header('Content-Type') ?: 'image/jpeg',
+            ];
         } catch (\Throwable $e) {
             return null;
         }

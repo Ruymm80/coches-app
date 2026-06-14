@@ -44,7 +44,7 @@ Railway empezará a desplegar automáticamente. **Va a fallar la primera vez** p
 | Variable | Valor |
 |---|---|
 | `APP_KEY` | `base64:NQ6qRchUfzW9A9FDrLGHyIY+XEZmKqSfGO6Vv0POd24=` |
-| `APP_NAME` | `Coches.app` |
+| `APP_NAME` | `Carros.net` |
 | `APP_ENV` | `production` |
 | `APP_DEBUG` | `false` |
 | `APP_LOCALE` | `es` |
