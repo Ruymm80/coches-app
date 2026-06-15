@@ -1,9 +1,9 @@
 <x-app-layout>
-    <x-slot name="title">Perfil — Carros.net</x-slot>
+    <x-slot name="title">Mi perfil — Carros.net</x-slot>
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Perfil
+            Mi perfil
         </h2>
     </x-slot>
 
