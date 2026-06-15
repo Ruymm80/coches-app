@@ -229,8 +229,6 @@ DB_PORT=3306
 DB_DATABASE=carros
 DB_USERNAME=carros
 DB_PASSWORD=la_password_que_pusiste
-
-PIXABAY_API_KEY=
 ```
 
 Genera APP_KEY nuevo (opcional, por seguridad):
@@ -239,7 +237,7 @@ Genera APP_KEY nuevo (opcional, por seguridad):
 php artisan key:generate
 ```
 
-Migrate + seed (las imágenes Pixabay/loremflickr tardan 1-3 min):
+Migrate + seed (las imágenes se descargan de loremflickr, tarda 1-3 min):
 
 ```bash
 php artisan migrate:fresh --seed --force

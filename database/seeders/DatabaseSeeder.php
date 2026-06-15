@@ -9,7 +9,7 @@ use App\Models\Favorito;
 use App\Models\Imagen;
 use App\Models\Mensaje;
 use App\Models\User;
-use App\Services\CarImageDownloader;
+use App\Services\SeedImageDownloader;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    public function run(CarImageDownloader $downloader): void
+    public function run(SeedImageDownloader $downloader): void
     {
         // Idempotente: si el admin ya existe, asumimos que la BD ya está sembrada.
         // Esto evita el "UniqueConstraintViolationException" al reiniciar el contenedor
@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
 
             for ($j = 0; $j < $imageCount; $j++) {
                 $seed = ($coche->id * 1000) + ($j * 100) + rand(0, 99);
-                $download = $downloader->fetch($coche->brand, $coche->model, $seed);
+                $download = $downloader->download($coche->brand, $seed);
 
                 if ($download === null) {
                     // Fallback: URL externa si la descarga falla

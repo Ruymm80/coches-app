@@ -89,7 +89,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('coches', [AdminController::class, 'cochesIndex'])->name('coches.index');
     Route::patch('coches/{coche:slug}/estado', [AdminController::class, 'cocheUpdateStatus'])->name('coches.status');
     Route::patch('coches/{coche:slug}/destacar', [AdminController::class, 'cocheToggleFeatured'])->name('coches.feature');
-    Route::post('coches/{coche:slug}/regenerar-imagen', [AdminController::class, 'cocheRegenerarImagen'])->name('coches.regenerate-image');
     Route::delete('coches/{coche:slug}', [AdminController::class, 'cocheDestroy'])->name('coches.destroy');
 });
 
