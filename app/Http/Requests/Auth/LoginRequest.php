@@ -10,18 +10,20 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Validación y autenticación del formulario de inicio de sesión.
+ * Incluye limitación de intentos para frenar ataques por fuerza bruta.
+ */
 class LoginRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    /** El formulario de login es público; cualquiera puede intentar autenticarse. */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Reglas mínimas para el inicio de sesión.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -34,7 +36,8 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Attempt to authenticate the request's credentials.
+     * Intenta autenticar al usuario. Cuenta los intentos fallidos para activar
+     * el rate limiter y los reinicia tras un login correcto.
      *
      * @throws ValidationException
      */
@@ -54,7 +57,8 @@ class LoginRequest extends FormRequest
     }
 
     /**
-     * Ensure the login request is not rate limited.
+     * Bloquea durante varios segundos al usuario que supera 5 intentos
+     * fallidos consecutivos desde la misma combinación email + IP.
      *
      * @throws ValidationException
      */
@@ -76,9 +80,7 @@ class LoginRequest extends FormRequest
         ]);
     }
 
-    /**
-     * Get the rate limiting throttle key for the request.
-     */
+    /** Clave única (email + IP) usada por el rate limiter para identificar al intentador. */
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());

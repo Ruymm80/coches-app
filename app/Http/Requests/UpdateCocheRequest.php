@@ -9,8 +9,14 @@ use App\Enums\Transmission;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
+/**
+ * Validación para editar un anuncio. Reutiliza las mismas reglas que en la
+ * creación y añade el array delete_images con los IDs de las imágenes que
+ * el usuario quiere quitar.
+ */
 class UpdateCocheRequest extends FormRequest
 {
+    /** Solo el dueño del anuncio (o un admin, vía policy) puede modificarlo. */
     public function authorize(): bool
     {
         return $this->user()?->can('update', $this->route('coche')) ?? false;

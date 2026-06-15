@@ -40,6 +40,7 @@ class Coche extends Model
 
     protected static function booted(): void
     {
+        // Genera un slug único al crear y lo regenera si cambia el título.
         static::creating(function (Coche $coche) {
             if (blank($coche->slug)) {
                 $coche->slug = static::generateUniqueSlug($coche->title);
@@ -53,6 +54,7 @@ class Coche extends Model
         });
     }
 
+    /** Genera un slug único a partir del título, añadiendo sufijo numérico si ya existe. */
     public static function generateUniqueSlug(string $title, ?int $ignoreId = null): string
     {
         $base = Str::slug($title);
@@ -71,46 +73,55 @@ class Coche extends Model
         return $slug;
     }
 
+    /** Usa el slug como clave de ruta en lugar del id (URLs amigables). */
     public function getRouteKeyName(): string
     {
         return 'slug';
     }
 
+    /** Usuario propietario / vendedor del anuncio. */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** Galería de imágenes del anuncio, ordenadas por posición. */
     public function imagenes(): HasMany
     {
         return $this->hasMany(Imagen::class, 'coche_id')->orderBy('sort_order');
     }
 
+    /** Imagen principal que se usa como portada del anuncio. */
     public function imagenPrincipal(): HasOne
     {
         return $this->hasOne(Imagen::class, 'coche_id')->where('is_primary', true);
     }
 
+    /** Registros de favoritos asociados a este coche. */
     public function favoritos(): HasMany
     {
         return $this->hasMany(Favorito::class, 'coche_id');
     }
 
+    /** Usuarios que han marcado este coche como favorito. */
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favoritos', 'coche_id', 'user_id')->withTimestamps();
     }
 
+    /** Chats abiertos sobre este anuncio. */
     public function chats(): HasMany
     {
         return $this->hasMany(Chat::class, 'coche_id');
     }
 
+    /** Filtra solo los anuncios en estado Activo. */
     public function scopeActive($query)
     {
         return $query->where('status', ListingStatus::Active);
     }
 
+    /** Comprueba si el coche está marcado como favorito por el usuario dado. */
     public function isFavoritedBy(?User $user): bool
     {
         if (! $user) {

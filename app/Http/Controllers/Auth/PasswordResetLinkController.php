@@ -9,18 +9,21 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
+/**
+ * Solicita el envío por correo del enlace para restablecer la contraseña
+ * cuando el usuario la ha olvidado.
+ */
 class PasswordResetLinkController extends Controller
 {
-    /**
-     * Display the password reset link request view.
-     */
+    /** Muestra el formulario donde el usuario indica su correo. */
     public function create(): View
     {
         return view('auth.forgot-password');
     }
 
     /**
-     * Handle an incoming password reset link request.
+     * Envía el enlace de recuperación al correo introducido si existe en
+     * la base de datos, y muestra el mensaje correspondiente al usuario.
      *
      * @throws ValidationException
      */
@@ -30,9 +33,9 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
+        // Pedimos a Laravel que envíe el enlace. La respuesta indica si se ha
+        // enviado correctamente o si ha habido algún problema (correo no encontrado,
+        // límite de intentos, etc.), para mostrar el mensaje adecuado.
         $status = Password::sendResetLink(
             $request->only('email')
         );

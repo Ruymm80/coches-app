@@ -12,6 +12,12 @@ use App\Support\CocheFilter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * Controlador de coches: zona pública (home, listado, ficha) y zona
+ * privada del usuario (sus propios anuncios). La gestión de la galería
+ * de imágenes se delega en ImagenService para mantener este controlador
+ * centrado en orquestar requests y vistas.
+ */
 class CocheController extends Controller
 {
     public function __construct(protected ImagenService $imagenes) {}
@@ -20,6 +26,7 @@ class CocheController extends Controller
      *  Público
      * ============================================================ */
 
+    /** Página de inicio: muestra anuncios destacados y los más recientes. */
     public function home()
     {
         $featured = Coche::active()
@@ -38,6 +45,7 @@ class CocheController extends Controller
         return view('home', compact('featured', 'recent'));
     }
 
+    /** Listado público de coches con filtros y paginación. */
     public function index(Request $request, CocheFilter $filter)
     {
         $coches = $filter->apply(
@@ -58,6 +66,10 @@ class CocheController extends Controller
         ]);
     }
 
+    /**
+     * Ficha pública de un anuncio. Si no está activo, solo el dueño o un admin
+     * pueden verlo (para previsualizar borradores).
+     */
     public function show(Coche $coche)
     {
         abort_unless($coche->status->value === 'active' || $this->canPreview($coche), 404);
@@ -76,6 +88,7 @@ class CocheController extends Controller
         return view('coches.show', compact('coche', 'similares'));
     }
 
+    /** Permite ver el anuncio incluso si no está activo, al dueño o a un administrador. */
     protected function canPreview(Coche $coche): bool
     {
         $user = auth()->user();
@@ -84,7 +97,9 @@ class CocheController extends Controller
     }
 
     /**
-     * Sirve el binario de una imagen almacenada en BD.
+     * Endpoint público que sirve el binario de una imagen almacenada como BLOB
+     * en la base de datos. Aplica cache de larga duración porque las imágenes
+     * son inmutables una vez subidas.
      */
     public function imagen(Imagen $imagen)
     {
@@ -101,6 +116,7 @@ class CocheController extends Controller
      *  CRUD del usuario sobre sus propios coches
      * ============================================================ */
 
+    /** Listado paginado de anuncios publicados por el usuario autenticado. */
     public function mine(Request $request)
     {
         $coches = $request->user()
@@ -112,6 +128,7 @@ class CocheController extends Controller
         return view('coches.mine', compact('coches'));
     }
 
+    /** Formulario para publicar un anuncio nuevo (inicialmente como borrador). */
     public function create()
     {
         return view('coches.create', [
@@ -119,6 +136,7 @@ class CocheController extends Controller
         ]);
     }
 
+    /** Guarda el anuncio nuevo y sube sus imágenes (si hay). */
     public function store(StoreCocheRequest $request)
     {
         $data = $request->validated();
@@ -136,6 +154,7 @@ class CocheController extends Controller
             ->with('status', 'Anuncio creado correctamente.');
     }
 
+    /** Formulario de edición de un anuncio propio (protegido por la policy). */
     public function edit(Coche $coche)
     {
         Gate::authorize('update', $coche);
@@ -145,6 +164,10 @@ class CocheController extends Controller
         return view('coches.edit', compact('coche'));
     }
 
+    /**
+     * Actualiza un anuncio existente: aplica cambios en los campos, borra
+     * las imágenes marcadas y añade las nuevas que se hayan subido.
+     */
     public function update(UpdateCocheRequest $request, Coche $coche)
     {
         $data = $request->validated();
@@ -167,6 +190,7 @@ class CocheController extends Controller
             ->with('status', 'Anuncio actualizado.');
     }
 
+    /** Borra un anuncio propio y todas sus imágenes. */
     public function destroy(Coche $coche)
     {
         Gate::authorize('delete', $coche);
@@ -179,6 +203,7 @@ class CocheController extends Controller
             ->with('status', 'Anuncio eliminado.');
     }
 
+    /** Marca el anuncio como vendido sin necesidad de borrarlo. */
     public function markSold(Coche $coche)
     {
         Gate::authorize('update', $coche);

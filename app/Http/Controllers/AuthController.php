@@ -14,18 +14,26 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
+/**
+ * Controlador unificado de autenticación: login, registro y logout.
+ * Reemplaza a los controladores que genera Breeze por defecto.
+ */
 class AuthController extends Controller
 {
     /* ============================================================
      *  Login
      * ============================================================ */
 
+    /** Muestra el formulario de inicio de sesión. */
     public function loginForm(): View
     {
         return view('auth.login');
     }
 
     /**
+     * Procesa el inicio de sesión y regenera la sesión para evitar
+     * ataques de fijación.
+     *
      * @throws ValidationException
      */
     public function login(LoginRequest $request): RedirectResponse
@@ -40,12 +48,15 @@ class AuthController extends Controller
      *  Registro
      * ============================================================ */
 
+    /** Muestra el formulario de registro de nuevo usuario. */
     public function registerForm(): View
     {
         return view('auth.register');
     }
 
     /**
+     * Crea la cuenta nueva con rol de usuario normal y la deja autenticada.
+     *
      * @throws ValidationException
      */
     public function register(Request $request): RedirectResponse
@@ -78,6 +89,7 @@ class AuthController extends Controller
      *  Logout
      * ============================================================ */
 
+    /** Cierra la sesión actual e invalida el token CSRF asociado. */
     public function logout(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();

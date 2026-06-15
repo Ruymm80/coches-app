@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+/** Estados posibles del ciclo de vida de un anuncio. */
 enum ListingStatus: string
 {
     case Draft = 'draft';
@@ -9,6 +10,7 @@ enum ListingStatus: string
     case Sold = 'sold';
     case Expired = 'expired';
 
+    /** Etiqueta legible en español para mostrar en las vistas. */
     public function label(): string
     {
         return match ($this) {
@@ -19,6 +21,7 @@ enum ListingStatus: string
         };
     }
 
+    /** Clases CSS de Tailwind para pintar la insignia de estado en color. */
     public function badgeClasses(): string
     {
         return match ($this) {

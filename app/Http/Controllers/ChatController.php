@@ -9,8 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * Controlador de la mensajería entre comprador y vendedor. La sincronización
+ * es por refresco de página: este proyecto no usa WebSockets ni tiempo real.
+ */
 class ChatController extends Controller
 {
+    /** Listado de conversaciones del usuario, ordenadas por último mensaje. */
     public function index(Request $request)
     {
         $user = $request->user();
@@ -28,6 +33,10 @@ class ChatController extends Controller
         return view('chats.index', compact('chats'));
     }
 
+    /**
+     * Detalle de una conversación. Al abrirla se marcan como leídos
+     * los mensajes que el otro participante había enviado al usuario.
+     */
     public function show(Chat $chat, Request $request)
     {
         Gate::authorize('view', $chat);
@@ -43,12 +52,18 @@ class ChatController extends Controller
         return view('chats.show', compact('chat'));
     }
 
+    /**
+     * Inicia una conversación nueva sobre un anuncio (o reutiliza la existente)
+     * y envía el primer mensaje. Se rechaza si el usuario es el propio vendedor.
+     */
     public function start(EnviarMensajeRequest $request, Coche $coche)
     {
         $user = $request->user();
 
         abort_if($user->id === $coche->user_id, 403, 'No puedes contactarte a ti mismo.');
 
+        // Transacción para garantizar que el chat y el primer mensaje
+        // se crean juntos o no se crea ninguno.
         $chat = DB::transaction(function () use ($user, $coche, $request) {
             $chat = Chat::firstOrCreate(
                 [
@@ -73,6 +88,7 @@ class ChatController extends Controller
             ->with('status', 'Mensaje enviado al vendedor.');
     }
 
+    /** Añade un mensaje nuevo a una conversación existente. */
     public function reply(EnviarMensajeRequest $request, Chat $chat)
     {
         Gate::authorize('reply', $chat);

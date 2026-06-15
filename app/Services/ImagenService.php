@@ -6,10 +6,16 @@ use App\Models\Coche;
 use App\Models\Imagen;
 use Illuminate\Http\UploadedFile;
 
+/**
+ * Servicio responsable de la galería de imágenes de un coche: subir, borrar
+ * y mantener consistente la imagen principal. Centraliza esa lógica para que
+ * los controladores no manipulen el modelo Imagen directamente.
+ */
 class ImagenService
 {
     /**
-     * Guarda las imágenes subidas como BLOB en la BD.
+     * Guarda las imágenes subidas como BLOB en la BD. La primera imagen del
+     * anuncio se marca automáticamente como principal si todavía no había una.
      */
     public function storeFor(Coche $coche, array $files): void
     {

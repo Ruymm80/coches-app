@@ -8,8 +8,14 @@ use App\Enums\Transmission;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
+/**
+ * Construye dinámicamente la consulta del listado público de coches a
+ * partir de los parámetros de la URL (?brand=, ?price_min=, ?sort=, ...).
+ * Mantiene el controlador limpio centralizando todos los filtros aquí.
+ */
 class CocheFilter
 {
+    /** Modos de ordenación soportados por el listado, con su etiqueta legible. */
     public const SORTS = [
         'recent' => 'Más recientes',
         'price_asc' => 'Precio: menor a mayor',
@@ -20,6 +26,7 @@ class CocheFilter
 
     public function __construct(protected Request $request) {}
 
+    /** Aplica los filtros y la ordenación al query builder y lo devuelve. */
     public function apply(Builder $query): Builder
     {
         return $query
@@ -42,6 +49,7 @@ class CocheFilter
             ->tap(fn ($q) => $this->applySort($q));
     }
 
+    /** Añade la cláusula ORDER BY al query según el parámetro ?sort=. */
     protected function applySort(Builder $query): void
     {
         match ($this->str('sort') ?? 'recent') {
@@ -53,6 +61,7 @@ class CocheFilter
         };
     }
 
+    /** Lee un parámetro string del query, devolviendo null si está vacío. */
     protected function str(string $key): ?string
     {
         $val = $this->request->query($key);
@@ -60,6 +69,7 @@ class CocheFilter
         return is_string($val) && $val !== '' ? trim($val) : null;
     }
 
+    /** Lee un parámetro entero del query, devolviendo null si no es numérico. */
     protected function int(string $key): ?int
     {
         $val = $this->request->query($key);
@@ -67,6 +77,7 @@ class CocheFilter
         return is_numeric($val) ? (int) $val : null;
     }
 
+    /** Lee un parámetro y lo convierte al enum indicado, o null si no coincide. */
     protected function enum(string $key, string $enumClass): ?object
     {
         $val = $this->str($key);

@@ -13,6 +13,11 @@ use App\Services\ImagenService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
+/**
+ * Controlador del panel de administración. Las rutas que acaba consumiendo
+ * están protegidas por el middleware "admin", así que aquí asumimos que el
+ * usuario que llega ya tiene permisos suficientes.
+ */
 class AdminController extends Controller
 {
     public function __construct(protected ImagenService $imagenes) {}
@@ -21,6 +26,7 @@ class AdminController extends Controller
      *  Dashboard
      * ============================================================ */
 
+    /** Panel de inicio con métricas globales y últimos registros. */
     public function dashboard()
     {
         $stats = [
@@ -48,6 +54,7 @@ class AdminController extends Controller
      *  Gestión de usuarios
      * ============================================================ */
 
+    /** Listado paginado de usuarios con buscador por nombre o correo. */
     public function usersIndex(Request $request)
     {
         $q = $request->query('q');
@@ -67,11 +74,13 @@ class AdminController extends Controller
         return view('admin.users.index', compact('users', 'q'));
     }
 
+    /** Formulario de edición de un usuario concreto desde el panel de admin. */
     public function userEdit(User $user)
     {
         return view('admin.users.edit', compact('user'));
     }
 
+    /** Guarda los cambios introducidos por el admin sobre un usuario. */
     public function userUpdate(UpdateUserByAdminRequest $request, User $user)
     {
         $user->update($request->validated());
@@ -81,6 +90,7 @@ class AdminController extends Controller
             ->with('status', 'Usuario actualizado.');
     }
 
+    /** Elimina un usuario, impidiendo que el admin se borre a sí mismo. */
     public function userDestroy(Request $request, User $user)
     {
         if ($user->id === $request->user()->id) {
@@ -98,6 +108,7 @@ class AdminController extends Controller
      *  Moderación de coches
      * ============================================================ */
 
+    /** Listado paginado de anuncios con búsqueda y filtro por estado. */
     public function cochesIndex(Request $request)
     {
         $q = $request->query('q');
@@ -126,6 +137,7 @@ class AdminController extends Controller
         ]);
     }
 
+    /** Cambia el estado de un anuncio (activo, vendido, expirado, borrador). */
     public function cocheUpdateStatus(Request $request, Coche $coche)
     {
         $data = $request->validate([
@@ -137,6 +149,7 @@ class AdminController extends Controller
         return back()->with('status', 'Estado actualizado a '.$coche->status->label().'.');
     }
 
+    /** Marca o desmarca un anuncio como destacado en la home. */
     public function cocheToggleFeatured(Coche $coche)
     {
         $coche->update(['featured' => ! $coche->featured]);
@@ -144,6 +157,7 @@ class AdminController extends Controller
         return back()->with('status', $coche->featured ? 'Anuncio destacado.' : 'Quitado de destacados.');
     }
 
+    /** Borra un anuncio desde el panel de admin junto con sus imágenes. */
     public function cocheDestroy(Coche $coche)
     {
         $this->imagenes->deleteAllForCoche($coche);

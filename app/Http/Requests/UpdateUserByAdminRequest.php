@@ -7,8 +7,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
+/**
+ * Validación de los cambios que un administrador puede hacer sobre
+ * cualquier usuario desde el panel de admin.
+ */
 class UpdateUserByAdminRequest extends FormRequest
 {
+    /** Solo los administradores pueden modificar a otros usuarios. */
     public function authorize(): bool
     {
         return $this->user()?->isAdmin() ?? false;

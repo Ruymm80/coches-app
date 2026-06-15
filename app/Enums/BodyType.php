@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+/** Tipo de carrocería del vehículo. */
 enum BodyType: string
 {
     case Sedan = 'sedan';
@@ -13,6 +14,7 @@ enum BodyType: string
     case Pickup = 'pickup';
     case Van = 'van';
 
+    /** Etiqueta legible en español para mostrar en formularios y filtros. */
     public function label(): string
     {
         return match ($this) {
@@ -27,6 +29,7 @@ enum BodyType: string
         };
     }
 
+    /** Devuelve un array valor → etiqueta listo para usar en un select. */
     public static function options(): array
     {
         return collect(self::cases())

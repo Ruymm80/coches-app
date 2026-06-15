@@ -9,19 +9,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
+/**
+ * Vuelve a pedir la contraseña al usuario antes de ejecutar acciones
+ * sensibles, aunque ya tenga sesión iniciada.
+ */
 class ConfirmablePasswordController extends Controller
 {
-    /**
-     * Show the confirm password view.
-     */
+    /** Muestra el formulario de confirmación de contraseña. */
     public function show(): View
     {
         return view('auth.confirm-password');
     }
 
-    /**
-     * Confirm the user's password.
-     */
+    /** Verifica la contraseña introducida y deja constancia en la sesión. */
     public function store(Request $request): RedirectResponse
     {
         if (! Auth::guard('web')->validate([

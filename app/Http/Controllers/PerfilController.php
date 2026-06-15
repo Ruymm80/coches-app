@@ -11,12 +11,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+/**
+ * Controlador de la zona privada de "Mi cuenta": dashboard, edición de
+ * datos personales, avatar, eliminación de cuenta y gestión de favoritos.
+ */
 class PerfilController extends Controller
 {
     /* ============================================================
      *  Dashboard del usuario
      * ============================================================ */
 
+    /** Resumen de la actividad del usuario: contadores y últimos anuncios. */
     public function dashboard(Request $request)
     {
         $user = $request->user();
@@ -43,6 +48,7 @@ class PerfilController extends Controller
      *  Datos personales (perfil)
      * ============================================================ */
 
+    /** Muestra el formulario de edición de datos personales. */
     public function edit(Request $request): View
     {
         return view('perfil.edit', [
@@ -50,6 +56,11 @@ class PerfilController extends Controller
         ]);
     }
 
+    /**
+     * Guarda los cambios del perfil. Si el correo cambia se obliga a verificarlo
+     * de nuevo, y si se sube avatar se almacena como BLOB en la base de datos
+     * (más portable que el sistema de ficheros para entornos de despliegue gratuito).
+     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
@@ -83,6 +94,10 @@ class PerfilController extends Controller
         ]);
     }
 
+    /**
+     * Elimina la cuenta del usuario actual tras confirmar la contraseña.
+     * Cierra la sesión e invalida los tokens asociados antes de redirigir.
+     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -102,6 +117,7 @@ class PerfilController extends Controller
      *  Favoritos
      * ============================================================ */
 
+    /** Listado paginado de los coches que el usuario ha marcado como favoritos. */
     public function favoritos(Request $request)
     {
         $coches = $request->user()
@@ -113,6 +129,7 @@ class PerfilController extends Controller
         return view('perfil.favoritos', compact('coches'));
     }
 
+    /** Añade o quita un coche de los favoritos del usuario (toggle). */
     public function toggleFavorito(Request $request, Coche $coche)
     {
         $user = $request->user();

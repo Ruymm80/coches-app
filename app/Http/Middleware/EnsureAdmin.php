@@ -6,6 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Middleware que protege las rutas del panel de administración: corta
+ * la petición con un 403 si el usuario no tiene rol de administrador.
+ */
 class EnsureAdmin
 {
     public function handle(Request $request, Closure $next): Response

@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+/** Tipo de combustible que utiliza el vehículo. */
 enum FuelType: string
 {
     case Gasoline = 'gasoline';
@@ -11,6 +12,7 @@ enum FuelType: string
     case Lpg = 'lpg';
     case Cng = 'cng';
 
+    /** Etiqueta legible en español para usar en formularios y filtros. */
     public function label(): string
     {
         return match ($this) {
@@ -23,6 +25,7 @@ enum FuelType: string
         };
     }
 
+    /** Devuelve un array valor → etiqueta listo para usar en un select. */
     public static function options(): array
     {
         return collect(self::cases())

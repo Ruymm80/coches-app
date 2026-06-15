@@ -25,6 +25,8 @@ class Mensaje extends Model
 
     protected static function booted(): void
     {
+        // Al crear un mensaje se actualiza la marca de "último mensaje" del chat,
+        // para que el listado de conversaciones se pueda ordenar por actividad.
         static::created(function (Mensaje $mensaje) {
             $mensaje->chat()->update([
                 'last_message_at' => $mensaje->created_at,
@@ -32,11 +34,13 @@ class Mensaje extends Model
         });
     }
 
+    /** Conversación a la que pertenece el mensaje. */
     public function chat(): BelongsTo
     {
         return $this->belongsTo(Chat::class, 'chat_id');
     }
 
+    /** Usuario que envió el mensaje. */
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'sender_id');

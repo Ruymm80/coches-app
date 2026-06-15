@@ -64,41 +64,49 @@ class User extends Authenticatable
         return strtoupper(mb_substr($this->name, 0, 1));
     }
 
+    /** Indica si el usuario es administrador. */
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin;
     }
 
+    /** Anuncios publicados por el usuario. */
     public function coches(): HasMany
     {
         return $this->hasMany(Coche::class);
     }
 
+    /** Registros directos de favoritos (tabla pivote). */
     public function favoritos(): HasMany
     {
         return $this->hasMany(Favorito::class);
     }
 
+    /** Coches favoritos del usuario, accesibles directamente como colección de Coche. */
     public function favoritedCoches()
     {
         return $this->belongsToMany(Coche::class, 'favoritos', 'user_id', 'coche_id')->withTimestamps();
     }
 
+    /** Chats en los que el usuario participa como comprador. */
     public function chatsAsBuyer(): HasMany
     {
         return $this->hasMany(Chat::class, 'buyer_id');
     }
 
+    /** Chats en los que el usuario participa como vendedor. */
     public function chatsAsSeller(): HasMany
     {
         return $this->hasMany(Chat::class, 'seller_id');
     }
 
+    /** Mensajes enviados por el usuario. */
     public function sentMensajes(): HasMany
     {
         return $this->hasMany(Mensaje::class, 'sender_id');
     }
 
+    /** Número total de mensajes sin leer del usuario (en cualquiera de sus chats). */
     public function unreadMessagesCount(): int
     {
         return Mensaje::query()

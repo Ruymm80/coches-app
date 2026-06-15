@@ -9,8 +9,13 @@ use App\Enums\Transmission;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
+/**
+ * Reglas de validación para crear un anuncio. Solo se permite a usuarios
+ * autenticados; las imágenes son opcionales pero limitadas en cantidad y peso.
+ */
 class StoreCocheRequest extends FormRequest
 {
+    /** Solo los usuarios autenticados pueden publicar anuncios. */
     public function authorize(): bool
     {
         return $this->user() !== null;

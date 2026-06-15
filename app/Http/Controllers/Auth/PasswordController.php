@@ -8,11 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
+/**
+ * Cambia la contraseña del usuario autenticado desde la sección de perfil.
+ * Requiere la contraseña actual para evitar cambios no autorizados si la
+ * sesión queda abierta en un dispositivo compartido.
+ */
 class PasswordController extends Controller
 {
-    /**
-     * Update the user's password.
-     */
+    /** Valida la contraseña actual y guarda la nueva en formato hash. */
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validateWithBag('updatePassword', [

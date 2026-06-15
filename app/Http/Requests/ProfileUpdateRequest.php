@@ -6,6 +6,10 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * Validación de los datos del propio perfil. El correo debe ser único
+ * ignorando la propia cuenta y la foto de perfil es opcional.
+ */
 class ProfileUpdateRequest extends FormRequest
 {
     public function rules(): array
