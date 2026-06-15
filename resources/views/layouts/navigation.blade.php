@@ -13,9 +13,25 @@
                     <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
                         Inicio
                     </x-nav-link>
-                    <x-nav-link :href="route('coches.index')" :active="request()->routeIs('coches.*')">
+                    <x-nav-link :href="route('coches.index')" :active="request()->routeIs('coches.index')">
                         Buscar coches
                     </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('coches.mine')" :active="request()->routeIs('coches.mine')">
+                            Mis anuncios
+                        </x-nav-link>
+                        <x-nav-link :href="route('perfil.favoritos')" :active="request()->routeIs('perfil.favoritos')">
+                            Mis favoritos
+                        </x-nav-link>
+                        <x-nav-link :href="route('chats.index')" :active="request()->routeIs('chats.*')">
+                            <span class="inline-flex items-center gap-1">
+                                Mensajes
+                                @if(($unreadMessages ?? 0) > 0)
+                                    <span class="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white">{{ $unreadMessages }}</span>
+                                @endif
+                            </span>
+                        </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
@@ -48,14 +64,6 @@
                             @if (Auth::user()->isAdmin())
                                 <x-dropdown-link :href="route('admin.dashboard')">Panel admin</x-dropdown-link>
                             @endif
-                            <x-dropdown-link :href="route('coches.mine')">Mis anuncios</x-dropdown-link>
-                            <x-dropdown-link :href="route('perfil.favoritos')">Mis favoritos</x-dropdown-link>
-                            <x-dropdown-link :href="route('chats.index')">
-                                Mensajes
-                                @if(($unreadMessages ?? 0) > 0)
-                                    <span class="ms-1 inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white">{{ $unreadMessages }}</span>
-                                @endif
-                            </x-dropdown-link>
                             <x-dropdown-link :href="route('perfil.edit')">Perfil</x-dropdown-link>
 
                             <form method="POST" action="{{ route('logout') }}">
