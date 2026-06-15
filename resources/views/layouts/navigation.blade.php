@@ -64,7 +64,7 @@
                             @if (Auth::user()->isAdmin())
                                 <x-dropdown-link :href="route('admin.dashboard')">Panel admin</x-dropdown-link>
                             @endif
-                            <x-dropdown-link :href="route('perfil.edit')">Perfil</x-dropdown-link>
+                            <x-dropdown-link :href="route('perfil.edit')">Mi perfil</x-dropdown-link>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -120,7 +120,7 @@
                             <span class="ms-1 inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white">{{ $unreadMessages }}</span>
                         @endif
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('perfil.edit')">Perfil</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('perfil.edit')">Mi perfil</x-responsive-nav-link>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <x-responsive-nav-link :href="route('logout')"
