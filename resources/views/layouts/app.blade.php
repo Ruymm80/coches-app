@@ -28,10 +28,20 @@
             @endisset
 
             <main class="flex-1">
-                @if (session('status'))
+                @php
+                    $flashMap = [
+                        'profile-updated'        => 'Perfil actualizado correctamente.',
+                        'password-updated'       => 'Contraseña actualizada correctamente.',
+                        'verification-link-sent' => 'Te hemos enviado un nuevo enlace de verificación al correo.',
+                    ];
+                    $flashStatus = session('status');
+                    $flashText = $flashStatus ? ($flashMap[$flashStatus] ?? $flashStatus) : null;
+                @endphp
+
+                @if ($flashText)
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                         <div class="rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
-                            {{ session('status') }}
+                            {{ $flashText }}
                         </div>
                     </div>
                 @endif
